@@ -1,20 +1,20 @@
-name: build-test-deploy 
+name: build-test
+
 on:
   workflow_call:
-    
     inputs:
       java-version:
-        description: "Node version"
+        description: "Java version"
         required: true
         type: string
 
-jobs: 
+jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
       - name: checkout repo
-        uses: actions/checkout@v4 \
+        uses: actions/checkout@v3
 
       - name: SetUp Java ${{ inputs.java-version }}
         uses: actions/setup-java@v4
@@ -22,20 +22,24 @@ jobs:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: ${{ inputs.java-version }}
 
-      
+      - name: Building Packages
+        run: |
+          mvn clean install
+          echo "Completed Build"
 
-  test: 
+  test:
     needs: build
-
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
       - name: checkout repo
-        uses: actions/checkout@v3 
+        uses: actions/checkout@v3
 
       - name: use Java ${{ inputs.java-version }}
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: ${{ inputs.java-version }}
-           
+
+      - name: Testing the packages
+        run: mvn test
