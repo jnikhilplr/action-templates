@@ -1,0 +1,41 @@
+name: build-test-deploy 
+on:
+  workflow_call:
+    
+    inputs:
+      java-version:
+        description: "Node version"
+        required: true
+        type: string
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: checkout repo
+        uses: actions/checkout@v4 \
+
+      - name: SetUp Java ${{ inputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: ${{ inputs.java-version }}
+
+      
+
+  test: 
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: checkout repo
+        uses: actions/checkout@v3 
+
+      - name: use Java ${{ inputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: ${{ inputs.java-version }}
+           
